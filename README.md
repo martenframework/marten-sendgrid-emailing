@@ -3,7 +3,7 @@
 [![CI](https://github.com/martenframework/marten-sendgrid-emailing/workflows/Specs/badge.svg)](https://github.com/martenframework/marten-sendgrid-emailing/actions)
 [![CI](https://github.com/martenframework/marten-sendgrid-emailing/workflows/QA/badge.svg)](https://github.com/martenframework/marten-sendgrid-emailing/actions)
 
-**Marten Sendgrid Emailing** provides a [Sendgrid](https://sendgrid.com) backend that can be used with Marten web framework's [emailing system](https://martenframework.com/docs/next/emailing).
+**Marten Sendgrid Emailing** provides a [Sendgrid](https://sendgrid.com) backend that can be used with Marten web framework's [emailing system](https://martenframework.com/docs/emailing).
 
 ## Installation
 
