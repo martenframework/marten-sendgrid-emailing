@@ -1,3 +1,5 @@
+require "base64"
+
 require "./marten_sendgrid_emailing/backend"
 
 module MartenSendgridEmailing
