@@ -151,6 +151,37 @@ describe MartenSendgridEmailing::Backend do
       backend.deliver(MartenSendgridEmailing::BackendSpec::TestEmailWithHeaders.new({"Foo" => "bar"}))
     end
 
+    it "delivers a simple email with attachments as expected" do
+      WebMock
+        .stub(:post, "https://api.sendgrid.com/v3/mail/send")
+        .with(
+          body: {
+            "subject"          => "Hello World!",
+            "from"             => {"name" => "John Doe", "email" => "from@example.com"},
+            "personalizations" => [{"to" => [{"email" => "to@example.com"}]}],
+            "headers"          => {} of String => String,
+            "mail_settings"    => {"sandbox_mode" => {"enable" => false}},
+            "content"          => [
+              {"type" => "text/html", "value" => "HTML body"},
+              {"type" => "text/plain", "value" => "Text body"},
+            ],
+            "attachments" => [
+              {
+                "content"     => "QXR0YWNobWVudCBjb250ZW50",
+                "filename"    => "test_attachment.txt",
+                "type"        => "text/plain",
+                "disposition" => "attachment",
+              },
+            ],
+          }.to_json,
+          headers: {"Authorization" => "Bearer api-key", "Content-Type" => "application/json"}
+        )
+        .to_return(body: "")
+
+      backend = MartenSendgridEmailing::Backend.new("api-key")
+      backend.deliver(MartenSendgridEmailing::BackendSpec::TestEmailWithAttachment.new)
+    end
+
     it "raises as expected if the response is not a success" do
       WebMock.stub(:post, "https://api.sendgrid.com/v3/mail/send").to_return do
         HTTP::Client::Response.new(400, body: "This is bad!")
@@ -201,6 +232,12 @@ module MartenSendgridEmailing::BackendSpec
 
     def headers
       @headers
+    end
+  end
+
+  class TestEmailWithAttachment < TestEmail
+    def initialize
+      attach(IO::Memory.new("Attachment content"), filename: "test_attachment.txt")
     end
   end
 end

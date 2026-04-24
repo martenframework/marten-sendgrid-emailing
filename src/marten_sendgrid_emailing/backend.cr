@@ -45,6 +45,7 @@ module MartenSendgridEmailing
           content(CONTENT_TYPE_HTML, email.html_body),
           content(CONTENT_TYPE_TEXT, email.text_body),
         ].compact,
+        "attachments" => email.attachments.empty? ? nil : sendgrid_attachments(email.attachments),
       }.compact
     end
 
@@ -61,6 +62,19 @@ module MartenSendgridEmailing
 
     private def sendgrid_addresses(addresses)
       addresses.map { |address| sendgrid_address(address).compact }
+    end
+
+    private def sendgrid_attachment(attachment)
+      {
+        "content"     => Base64.strict_encode(attachment.content),
+        "filename"    => attachment.filename,
+        "type"        => attachment.mime_type,
+        "disposition" => "attachment",
+      }
+    end
+
+    private def sendgrid_attachments(attachments)
+      attachments.map { |attachment| sendgrid_attachment(attachment) }
     end
   end
 end
