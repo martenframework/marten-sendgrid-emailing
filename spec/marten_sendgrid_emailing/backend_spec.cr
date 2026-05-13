@@ -178,6 +178,32 @@ describe MartenSendgridEmailing::Backend do
         )
         .to_return(body: "")
 
+      WebMock
+        .stub(:post, "https://api.sendgrid.com/v3/mail/send")
+        .with(
+          body: {
+            "subject"          => "Hello World!",
+            "from"             => {"name" => "John Doe", "email" => "from@example.com"},
+            "personalizations" => [{"to" => [{"email" => "to@example.com"}]}],
+            "headers"          => {} of String => String,
+            "mail_settings"    => {"sandbox_mode" => {"enable" => false}},
+            "content"          => [
+              {"type" => "text/html", "value" => "HTML body"},
+              {"type" => "text/plain", "value" => "Text body"},
+            ],
+            "attachments" => [
+              {
+                "content"     => "QXR0YWNobWVudCBjb250ZW50",
+                "filename"    => "test_attachment.txt",
+                "type"        => "text/plain; charset=utf-8",
+                "disposition" => "attachment",
+              },
+            ],
+          }.to_json,
+          headers: {"Authorization" => "Bearer api-key", "Content-Type" => "application/json"}
+        )
+        .to_return(body: "")
+
       backend = MartenSendgridEmailing::Backend.new("api-key")
       backend.deliver(MartenSendgridEmailing::BackendSpec::TestEmailWithAttachment.new)
     end
