@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (UNDER DEVELOPMENT)
+## 0.2.0 (2026-08-29)
 
 * Add support for attachments.
 
